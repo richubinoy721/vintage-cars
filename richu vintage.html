@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Auto Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Georgia', serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 5px solid #8B0000;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+        
+        header p {
+            font-style: italic;
+            color: #ccc;
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: #333;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 15px;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        
+        nav ul li a:hover, nav ul li a.active {
+            color: #8B0000;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+        
+        .hero-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: normal;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: fadeIn 2s ease-in-out;
+        }
+        
+        /* Cars Gallery */
+        .gallery {
+            padding: 60px 0;
+        }
+        
+        .gallery h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            color: #333;
+            position: relative;
+        }
+        
+        .gallery h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: #8B0000;
+            margin: 15px auto;
+        }
+        
+        .filter-controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 30px;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #8B0000;
+            color: #fff;
+            border-color: #8B0000;
+        }
+        
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .car-card {
+            background: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+        
+        .car-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .car-image {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .car-card:hover .car-image img {
+            transform: scale(1.1);
+        }
+        
+        .favorite-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .favorite-btn:hover {
+            background: rgba(139, 0, 0, 0.8);
+        }
+        
+        .favorite-btn.favorited {
+            background: #8B0000;
+            color: gold;
+        }
+        
+        .car-details {
+            padding: 20px;
+        }
+        
+        .car-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        
+        .car-year {
+            display: inline-block;
+            background: #8B0000;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .car-specs {
+            margin-bottom: 15px;
+        }
+        
+        .car-specs p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .car-specs p strong {
+            color: #8B0000;
+        }
+        
+        .learn-more {
+            display: inline-block;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        .learn-more:hover {
+            background: #8B0000;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: #fff;
+            max-width: 800px;
+            margin: 50px auto;
+            border-radius: 5px;
+            overflow: hidden;
+            animation: modalFadeIn 0.3s;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+            position: relative;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.8rem;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #8B0000;
+        }
+        
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-image {
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-details {
+            padding: 20px;
+        }
+        
+        .modal-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-specs p {
+            margin-bottom: 10px;
+        }
+        
+        .modal-specs p strong {
+            color: #8B0000;
+        }
+        
+        .modal-description {
+            margin-top: 20px;
+            line-height: 1.7;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: #fff;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        footer p {
+            margin-bottom: 10px;
+        }
+        
+        .social-links {
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            color: #fff;
+            margin: 0 10px;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: #8B0000;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes modalFadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #8B0000;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: #1a1a1a;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 5px 0;
+            }
+            
+            .hero {
+                height: 300px;
+            }
+            
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+            
+            .cars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-body {
+                flex-direction: column;
+            }
+            
+            .modal-image {
+                height: 250px;
+            }
+            
+            .modal-specs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Classic Auto Gallery</h1>
+            <p>Preserving automotive history one classic at a time</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Gallery</a></li>
+                <li><a href="#">History</a></li>
+                <li><a href="#">Events</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Timeless Beauty on Wheels</h2>
+            <p>Explore our curated collection of the most iconic vintage automobiles from the golden age of automotive design</p>
+        </div>
+    </section>
+    
+    <section class="gallery">
+        <div class="container">
+            <h2>Featured Classics</h2>
+            
+            <div class="filter-controls">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="american">American</button>
+                <button class="filter-btn" data-filter="european">European</button>
+                <button class="filter-btn" data-filter="sports">Sports</button>
+                <button class="filter-btn" data-filter="muscle">Muscle</button>
+                <button class="filter-btn" data-filter="luxury">Luxury</button>
+            </div>
+            
+            <div class="cars-grid" id="carsGrid">
+                <!-- Cars will be loaded dynamically with JavaScript -->
+            </div>
+        </div>
+    </section>
+    
+    <div class="modal" id="carModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Car Title</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modalImage" src="" alt="">
+                </div>
+                <div class="modal-details">
+                    <div class="modal-specs" id="modalSpecs">
+                        <!-- Specs will be added dynamically -->
+                    </div>
+                    <div class="modal-description" id="modalDescription">
+                        <!-- Description will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Classic Auto Gallery &copy; <span id="currentYear"></span></p>
+            <p>Preserving automotive heritage for future generations</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Car data
+        const carsData = [
+            {
+                id: 1,
+                title: "1967 Ford Mustang",
+                year: 1967,
+                image: "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98",
+                category: ["american", "muscle"],
+                specs: {
+                    "Make": "Ford",
+                    "Model": "Mustang",
+                    "Engine": "4.7L V8",
+                    "Power": "271 HP",
+                    "Torque": "312 lb-ft",
+                    "Transmission": "3-speed automatic / 4-speed manual",
+                    "Top Speed": "120 mph",
+                    "0-60 mph": "7.5 seconds",
+                    "Production": "472,121 units"
+                },
+                description: "The 1967 Ford Mustang represents the first major redesign of the original model. With its longer body and new styling cues, it became an instant classic. The Mustang's combination of style, performance, and affordability made it one of the most popular cars of its era."
+            },
+            {
+                id: 2,
+                title: "1957 Chevrolet Bel Air",
+                year: 1957,
+                image: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d",
+                category: ["american", "luxury"],
+                specs: {
+                    "Make": "Chevrolet",
+                    "Model": "Bel Air",
+                    "Engine": "4.6L V8 (283 cu in)",
+                    "Power": "283 HP",
+                    "Torque": "300 lb-ft",
+                    "Transmission": "3-speed manual / 2-speed automatic",
+                    "Top Speed": "115 mph",
+                    "0-60 mph": "9.5 seconds",
+                    "Production": "703,000 units"
+                },
+                description: "The 1957 Chevrolet Bel Air is one of the most recognizable American cars of the 1950s. With its iconic tailfins, chrome accents, and two-tone paint schemes, it epitomizes the styling of the era. The '57 Chevy remains highly sought after by collectors today."
+            },
+            {
+                id: 3,
+                title: "1963 Jaguar E-Type",
+                year: 1963,
+                image: "https://images.unsplash.com/photo-1550355291-bbee04a92027",
+                category: ["european", "sports"],
+                specs: {
+                    "Make": "Jaguar",
+                    "Model": "E-Type (Series 1)",
+                    "Engine": "3.8L DOHC I6",
+                    "Power": "265 HP",
+                    "Torque": "260 lb-ft",
+                    "Transmission": "4-speed manual",
+                    "Top Speed": "150 mph",
+                    "0-60 mph": "6.4 seconds",
+                    "Production": "12,519 units (3.8L models)"
+                },
+                description: "Enzo Ferrari called the Jaguar E-Type 'the most beautiful car ever made.' Its stunning design and impressive performance made it an instant legend. The E-Type combined race-bred technology with everyday usability, setting new standards for sports cars in the 1960s."
+            },
+            {
+                id: 4,
+                title: "1959 Cadillac Eldorado",
+                year: 1959,
+                image: "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+                category: ["american", "luxury"],
+                specs: {
+                    "Make": "Cadillac",
+                    "Model": "Eldorado Biarritz",
+                    "Engine": "6.4L V8 (390 cu in)",
+                    "Power": "345 HP",
+                    "Torque": "435 lb-ft",
+                    "Transmission": "4-speed Hydra-Matic automatic",
+                    "Top Speed": "125 mph",
+                    "0-60 mph": "10 seconds",
+                    "Production": "1,320 units (convertible)"
+                },
+                description: "The 1959 Cadillac Eldorado represents the peak of American automotive excess with its massive tailfins, chrome detailing, and luxurious interior. This car embodies the optimism and flamboyance of late 1950s America, making it one of the most collectible American classics."
+            },
+            {
+                id: 5,
+                title: "1969 Dodge Charger",
+                year: 1969,
+                image: "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+                category: ["american", "muscle"],
+                specs: {
+                    "Make": "Dodge",
+                    "Model": "Charger R/T",
+                    "Engine": "7.2L V8 (440 cu in)",
+                    "Power": "375 HP",
+                    "Torque": "480 lb-ft",
+                    "Transmission": "3-speed automatic / 4-speed manual",
+                    "Top Speed": "140 mph",
+                    "0-60 mph": "5.8 seconds",
+                    "Production": "89,199 units"
+                },
+                description: "The 1969 Dodge Charger is one of the most iconic muscle cars ever made, thanks in part to its starring role in movies and TV shows. Its aggressive styling and powerful engine options made it a favorite among performance enthusiasts. The Charger's 'Coke bottle' styling and hidden headlights are particularly distinctive."
+            },
+            {
+                id: 6,
+                title: "1965 Aston Martin DB5",
+                year: 1965,
+                image: "https://images.unsplash.com/photo-1494972308805-463bc619d34e",
+                category: ["european", "luxury", "sports"],
+                specs: {
+                    "Make": "Aston Martin",
+                    "Model": "DB5",
+                    "Engine": "4.0L I6",
+                    "Power": "282 HP",
+                    "Torque": "288 lb-ft",
+                    "Transmission": "5-speed manual / 3-speed automatic",
+                    "Top Speed": "145 mph",
+                    "0-60 mph": "7.1 seconds",
+                    "Production": "1,059 units"
+                },
+                description: "The Aston Martin DB5 gained worldwide fame as James Bond's car in Goldfinger. Beyond its cinematic fame, the DB5 is a masterpiece of British engineering, combining elegant styling with impressive performance. Its handcrafted interior and sophisticated engineering make it one of the most desirable classic cars."
+            },
+            {
+                id: 7,
+                title: "1970 Porsche 911S",
+                year: 1970,
+                image: "https://images.unsplash.com/photo-1551836026-d1b62c6c1a13",
+                category: ["european", "sports"],
+                specs: {
+                    "Make": "Porsche",
+                    "Model": "911S (2.2L)",
+                    "Engine": "2.2L flat-6",
+                    "Power": "180 HP",
+                    "Torque": "144 lb-ft",
+                    "Transmission": "5-speed manual",
+                    "Top Speed": "140 mph",
+                    "0-60 mph": "7.5 seconds",
+                    "Production": "1,492 units"
+                },
+                description: "The early 911S models represent some of the purest expressions of Porsche's iconic sports car. With its air-cooled rear engine and perfect weight distribution, the 911S offers a driving experience unlike any other. The 1970 model year is particularly sought after by collectors."
+            },
+            {
+                id: 8,
+                title: "1968 Chevrolet Corvette",
+                year: 1968,
+                image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2",
+                category: ["american", "sports"],
+                specs: {
+                    "Make": "Chevrolet",
+                    "Model": "Corvette Stingray",
+                    "Engine": "5.4L V8 (327 cu in)",
+                    "Power": "300 HP",
+                    "Torque": "360 lb-ft",
+                    "Transmission": "4-speed manual / 3-speed automatic",
+                    "Top Speed": "130 mph",
+                    "0-60 mph": "6.5 seconds",
+                    "Production": "28,566 units"
+                },
+                description: "The 1968 Corvette introduced the third generation of America's sports car with radical new styling. Its fiberglass body, hidden headlights, and removable T-top roof panels made it stand out from the crowd. The Corvette offered European-style performance with American muscle."
+            }
+        ];
+
+        // DOM Elements
+        const carsGrid = document.getElementById('carsGrid');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const carModal = document.getElementById('carModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalImage = document.getElementById('modalImage');
+        const modalSpecs = document.getElementById('modalSpecs');
+        const modalDescription = document.getElementById('modalDescription');
+        const closeModal = document.querySelector('.close-modal');
+        const backToTop = document.getElementById('backToTop');
+        const currentYear = document.getElementById('currentYear');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year in footer
+            currentYear.textContent = new Date().getFullYear();
+            
+            // Load all cars initially
+            displayCars(carsData);
+            
+            // Set up filter buttons
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    if (filter === 'all') {
+                        displayCars(carsData);
+                    } else {
+                        const filteredCars = carsData.filter(car => car.category.includes(filter));
+                        displayCars(filteredCars);
+                    }
+                });
+            });
+            
+            // Set up back to top button
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Close modal when clicking outside content
+            window.addEventListener('click', function(e) {
+                if (e.target === carModal) {
+                    carModal.style.display = 'none';
+                }
+            });
+        });
+
+        // Display cars in grid
+        function displayCars(cars) {
+            carsGrid.innerHTML = '';
+            
+            cars.forEach((car, index) => {
+                // Create delay for animation
+                const delay = index * 0.1;
+                
+                const carCard = document.createElement('div');
+                carCard.className = 'car-card';
+                carCard.style.animationDelay = `${delay}s`;
+                carCard.innerHTML = `
+                    <div class="car-image">
+                        <img src="${car.image}" alt="${car.title}">
+                        <button class="favorite-btn" data-id="${car.id}"><i class="far fa-heart"></i></button>
+                    </div>
+                    <div class="car-details">
+                        <h3>${car.title}</h3>
+                        <span class="car-year">${car.year}</span>
+                        <div class="car-specs">
+                            <p><strong>Engine:</strong> ${car.specs.Engine}</p>
+                            <p><strong>Power:</strong> ${car.specs.Power}</p>
+                            <p><strong>Top Speed:</strong> ${car.specs['Top Speed']}</p>
+                        </div>
+                        <button class="learn-more" data-id="${car.id}">View Details</button>
+                    </div>
+                `;
+                
+                carsGrid.appendChild(carCard);
+                
+                // Add animation class after a short delay to allow for positioning
+                setTimeout(() => {
+                    carCard.classList.add('visible');
+                }, 50);
+            });
+            
+            // Set up favorite buttons
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.classList.toggle('favorited');
+                    const icon = this.querySelector('i');
+                    if (this.classList.contains('favorited')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        // In a real app, you would save this to localStorage or a database
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                });
+            });
+            
+            // Set up learn more buttons
+            document.querySelectorAll('.learn-more').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const carId = parseInt(this.dataset.id);
+                    const car = carsData.find(c => c.id === carId);
+                    openModal(car);
+                });
+            });
+        }
+
+        // Open modal with car details
+        function openModal(car) {
+            modalTitle.textContent = car.title;
+            modalImage.src = car.image;
+            modalImage.alt = car.title;
+            
+            // Clear previous specs
+            modalSpecs.innerHTML = '';
+            
+            // Add all specs
+            for (const [key, value] of Object.entries(car.specs)) {
+                const specItem = document.createElement('p');
+                specItem.innerHTML = `<strong>${key}:</strong> ${value}`;
+                modalSpecs.appendChild(specItem);
+            }
+            
+            // Set description
+            modalDescription.textContent = car.description;
+            
+            // Show modal
+            carModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            carModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    </script>
+</body>
+</html>
